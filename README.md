@@ -1,8 +1,4 @@
 # Empirical Finance Projects
-Projects exploring financial markets through data analysis and quantitative methods.
-## Topics
-cat > README.md << 'EOF'
-# Empirical Finance Projects
 
 A collection of projects exploring financial markets through data analysis and quantitative methods.
 
@@ -18,7 +14,7 @@ A collection of projects exploring financial markets through data analysis and q
 
 ## Projects
 | Project | Description | Status |
-|--------|-------------|--------|
+|---------|-------------|--------|
 | TBD | Coming soon | 🔄 In progress |
 
 ## Setup
