@@ -19,8 +19,7 @@ Projects exploring financial markets through data analysis and quantitative meth
 ## Projects
 | Project | Description | Status |
 |---------|-------------|--------|
-| Momentum Strategy | Runs the same momentum backtest across consecutive 5-year periods
-to show how the strategy behaves across different market regimes: | 🔄 In progress |
+| Momentum Strategy | Rolling 5-year momentum strategy | 🔄 In progress |
 
 ## Setup
 ```bash
