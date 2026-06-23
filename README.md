@@ -9,13 +9,13 @@ Projects exploring financial markets through data analysis and quantitative meth
 
 ## Data
 - CRSP data
-- Data from Kenneth French's websit
+- Data from Kenneth French's website
 - FRED data
 
 ### FRED API setup
 1. Obtain a FRED API key.
 2. Copy `.env.example` to `.env`.
-3. Add your API key:
+3. Add own API key:
 
 
 ## Projects
