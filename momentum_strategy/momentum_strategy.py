@@ -1,19 +1,3 @@
-"""
-Cross-Sectional Momentum Strategy — Rolling 5-Year Windows
-============================================================
-Runs the same momentum backtest across consecutive 5-year periods
-to show how the strategy behaves across different market regimes:
-
-  2000–2004: Dot-com bust and recovery
-  2005–2009: Pre-crisis bull run and GFC
-  2010–2014: Post-crisis recovery
-  2015–2019: Low-volatility bull market
-  2020–2024: COVID crash, recovery, rate hike cycle
-  2021–2026: (partial overlap for recency)
-
-Each period produces its own plot saved as e.g. "results/momentum_2000_2004.png"
-"""
-
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt

@@ -7,7 +7,6 @@ import pandas as pd
 from pandas.tseries.offsets import MonthEnd
 import numpy as np
 from tqdm import tqdm 
-import urllib.request
 import zipfile
 import requests
 from dotenv import load_dotenv
@@ -16,30 +15,56 @@ start_date = "1960-02-01"
 end_date = "2024-12-01"
 
 # ── Fama French Data ──────────────────────────────────────────────────
-url = "https://mba.tuck.dartmouth.edu/pages/faculty/ken.french/ftp/F-F_Research_Data_Factors_CSV.zip"
+dataset = "F-F_Research_Data_Factors"
+base_url = "http://mba.tuck.dartmouth.edu/pages/faculty/ken.french/ftp/"
+url = f"{base_url}{dataset}_CSV.zip"
 
-zip_path = "data/fama_french.zip"
-csv_path = "data/F-F_Research_Data_Factors.CSV"
+resp = requests.get(url)
+resp.raise_for_status()
 
-urllib.request.urlretrieve(url, zip_path)
+with zipfile.ZipFile(io.BytesIO(resp.content)) as zf:
+    file_name = zf.namelist()[0]  # Ken French ZIPs contain one file
+    raw_text = zf.read(file_name).decode("latin1")
 
-with zipfile.ZipFile(zip_path, "r") as zf:
-    zf.extractall("data")
+chunks = raw_text.split("\r\n\r\n")
+table_text = max(chunks, key=len)
 
-factor_cols = ["Mkt-RF", "SMB", "HML", "RF"]
+match = re.search(r"^\s*,", table_text, flags=re.M)
+start = match.start()
+csv_text = "Date" + table_text[start:]
 
-ff3_monthly = (
-    pd.read_csv(csv_path, skiprows=3)
-    .loc[lambda df: df.iloc[:, 0].astype(str).str.match(r"^\d{6}$")]
-    .rename(columns=lambda c: "date" if c == "Unnamed: 0" else c)
-    .assign(
-        date=lambda df: pd.to_datetime(df["date"], format="%Y%m") + MonthEnd(0),
-        **{
-            col: lambda df, col=col: df[col].astype(float) / 100
-            for col in factor_cols
-        }
-    )
+ff_raw = pd.read_csv(io.StringIO(csv_text), index_col=0)
+
+s = ff_raw.index.astype(str)
+
+if (s.str.len() == 8).all():  # daily: YYYYMMDD
+    dt = pd.to_datetime(s, format="%Y%m%d")
+elif (s.str.len() == 6).all():  # monthly: YYYYMM
+    dt = pd.to_datetime(s + "01", format="%Y%m%d")
+elif (s.str.len() == 4).all():  # annual: YYYY
+    dt = pd.to_datetime(s + "0101", format="%Y%m%d")
+    dt = dt.dt.to_period("A-DEC").dt.to_timestamp("end")
+else:
+    raise ValueError("Unknown date format in Fama–French index.")
+
+ff_raw = ff_raw.set_index(dt)
+ff_raw.index.name = "date"
+
+# start and end dates
+if start_date:
+    ff_raw = ff_raw[ff_raw.index >= pd.to_datetime(start_date)]
+if end_date:
+    ff_raw = ff_raw[ff_raw.index <= pd.to_datetime(end_date)]
+
+ff3_monthly = (ff_raw
+    .div(100)
+    .reset_index(names="date")
+    .rename(columns=str.lower)
+    .rename(columns={"mkt-rf": "Mkt-RF", "smb" : "SMB", "hml": "HML", "rf": "RF"})
+    .replace({"-99.99": pd.NA, -99.99: pd.NA, -999: pd.NA})
 )
+ff3_monthly
+
 
 # ── Macro data from FRED ──────────────────────────────────────────────────
 FRED_API_KEY = os.getenv("FRED_API_KEY")
