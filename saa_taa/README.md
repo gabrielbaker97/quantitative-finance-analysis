@@ -10,8 +10,6 @@ Inspired by Faber (2007), a tactical asset allocation (TAA) portfolio is constru
 
 
 ## Key Results
-## Full-period results (2002–2026)
-
 | Strategy       | Ann. Excess Return | Volatility | Sharpe | Max Drawdown |
 |----------------|--------------------|------------|--------|--------------|
 | TAA            | 6.52%              | 6.33%      | 1.03   | −10.2%       |
@@ -21,10 +19,8 @@ Inspired by Faber (2007), a tactical asset allocation (TAA) portfolio is constru
 > TAA delivers competitive risk-adjusted returns (Sharpe 1.03 vs. 0.92 for 60/40) at roughly half the volatility and a fraction of the drawdown. The cost is modest underperformance in raw returns during US-equity-dominated regimes.
 
 ## Methodology 
-Stocks are sorted monthly into deciles by 12-2 momentum (cumulative return from T-12 to T-2, skipping the most recent month to avoid short-term reversal). Decile portfolios are value-weighted. The WML factor is constructed as D10 minnus D1. CAPM and FF3 alphas are estimated via OLS. 
+Each asset is held at equal weight (20%) when its price exceeds its 10-month simple moving average, and rotated to cash (SHY) otherwise. The signal is lagged one period to avoid look-ahead bias. Returns are computed in excess of the Ken French risk-free rate. Performance is evaluated on annualised excess return, volatility, Sharpe ratio, and maximum drawdown both over the full period and across five-year subperiods.
 
 ## Data
- - CRSP 
- - Ken French FF3 factors via the French data library
-
- 
+ - Risk-free rate via the French data library
+ - ETF for 5 asset classes from Yahoo Finance.
