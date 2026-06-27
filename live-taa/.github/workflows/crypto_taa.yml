@@ -2,8 +2,9 @@ name: Live Crypto TAA
 
 on:
   schedule:
+    # Kører hvert 4. time — GitHub Actions bruger UTC
     - cron: "0 */4 * * *"
-  workflow_dispatch:  
+  workflow_dispatch:  # Tillader manuel kørsel fra GitHub UI
 
 jobs:
   run-strategy:
@@ -18,16 +19,19 @@ jobs:
         with:
           python-version: "3.11"
 
-      - name: Install requirements
+      - name: Installer afhængigheder
+        working-directory: live-taa
         run: pip install -r requirements.txt
 
-      - name: Run strategy
+      - name: Kør strategi
+        working-directory: live-taa
         env:
           ALPACA_API_KEY: ${{ secrets.ALPACA_API_KEY }}
           ALPACA_API_SECRET: ${{ secrets.ALPACA_API_SECRET }}
         run: python live_crypto_taa.py
 
-      - name: Save signal log in repo
+      - name: Gem signal-log til repo
+        working-directory: live-taa
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
