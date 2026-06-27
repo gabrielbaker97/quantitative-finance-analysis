@@ -28,7 +28,7 @@ jobs:
         env:
           ALPACA_API_KEY: ${{ secrets.ALPACA_API_KEY }}
           ALPACA_API_SECRET: ${{ secrets.ALPACA_API_SECRET }}
-        run: python live_crypto_taa.py
+        run: python live_taa_crypto.py
 
       - name: Gem signal-log til repo
         working-directory: live-taa
