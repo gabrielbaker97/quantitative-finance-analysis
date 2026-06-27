@@ -1,0 +1,36 @@
+name: Live Crypto TAA
+
+on:
+  schedule:
+    - cron: "0 */4 * * *"
+  workflow_dispatch:  
+
+jobs:
+  run-strategy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install requirements
+        run: pip install -r requirements.txt
+
+      - name: Run strategy
+        env:
+          ALPACA_API_KEY: ${{ secrets.ALPACA_API_KEY }}
+          ALPACA_API_SECRET: ${{ secrets.ALPACA_API_SECRET }}
+        run: python live_crypto_taa.py
+
+      - name: Save signal log in repo
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add results/live_crypto_taa/signal_log.csv
+          git diff --cached --quiet || git commit -m "chore: signal log $(date -u +'%Y-%m-%d %H:%M UTC')"
+          git push
